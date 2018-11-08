@@ -1,0 +1,2 @@
+call "toolpath.bat"
+cmd
