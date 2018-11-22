@@ -1,16 +1,19 @@
 @echo off
 :: *****************************************************************************
 :: Script to create variables that represent git revisions for sources used.
+:: Needed enviroment variables:
+:: PROJECT_DIR=  RMCIOS impementation root dir
+:: INTERFACE_DIR = RMCIOS-Interface dir
+:: SRC_DIR = compiled source directory
 :: *****************************************************************************
 
-cd %PROJECTDIR%
 :: Variable for build revision id
 for /f %%i in ('git show -s --format^=%%h') do set REVISION_ID=%%i
 ::for /f %%i in ('hg id -n') do set REVISION_NUM=%%i
 set REVISION=Rev:%REVISION_ID%
 
 :: Variable for interface revision id
-cd %PROJECTDIR%
+cd %PROJECT_DIR%
 cd %INTERFACE_DIR%
 for /f %%i in ('git show -s --format^=%%h') do set IREVISION_ID=%%i
 set IREVISION=iRev:%IREVISION_ID%

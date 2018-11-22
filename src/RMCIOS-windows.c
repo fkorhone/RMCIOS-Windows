@@ -8,8 +8,8 @@ University of Helsinki, Finland
 
 Assistance, experience and feedback from following persons have been 
 critical for development of RMCIOS: Erkki Siivola, Juha Kangasluoma, 
-Lauri Ahonen, Ella H‰kkinen, Pasi Aalto, Joonas Enroth, Runlong Cai, 
-Markku Kulmala and Tuukka Pet‰j‰.
+Lauri Ahonen, Ella H√§kkinen, Pasi Aalto, Joonas Enroth, Runlong Cai, 
+Markku Kulmala and Tuukka Pet√§j√§.
 
 This file is part of RMCIOS. This notice was encoded using utf-8.
 
@@ -45,10 +45,10 @@ along with RMCIOS.  If not, see <http://www.gnu.org/licenses/>.
 /// @snippet examples.c execute_file
 void execute_file (const struct context_rmcios *context, FILE * fconf,
                    FILE * fresult);
+
 void execute_str (const struct context_rmcios *context, const char *input,
                   char *output, unsigned int max_output_len);
 
-//typedef void (__cdecl *f_set_channel_api)(struct channel_api_functions *funcs) ;
 typedef void (__cdecl * f_init_channels) (const struct context_rmcios *
                                           context);
 
@@ -84,9 +84,9 @@ void stdio_class_func (void *this,
 }
 
 
-/////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 // Channel for printf                                                            //
-/////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 void stdout_func (void *data,
                   const struct context_rmcios *context, int id,
                   enum function_rmcios function,
@@ -192,121 +192,25 @@ struct buffer_queue
    struct buffer_queue *next;   // Pointer to next item in the list
 };
 
-// Collect command line to queue in stack, using recursion and finally execute command in a single command line.
-// @return returns 0 on end of file or error, otherwiser returns 1
-int execute_file_queue (const struct context_rmcios *context,
-                        FILE * fconf,
-                        FILE * fresult,
-                        struct buffer_queue *first,
-                        struct buffer_queue *last, int total_size)
-{
-   char response[100];
-   response[0] = 0;
-   int c;
-
-   struct buffer_queue newdata;
-
-   if (last->length >= last->size)      // Allocate more buffer?
-   {
-      newdata.size = last->size * 2;
-      newdata.length = 0;
-      newdata.data = 0;
-      newdata.next = NULL;
-      last->next = &newdata;
-      last = &newdata;
-   }
-
-   if (fconf != NULL)
-   {
-      char buffer[last->size];
-      last->data = buffer;
-
-      // Scan file byte by byte:
-      while ((c = fgetc (fconf)) != EOF)
-      {
-         last->data[last->length++] = c;
-         total_size++;
-         if (last->length >= last->size)        // Buffer full! -> Need more buffer!
-         {
-            // Push more memory from stack:
-            return execute_file_queue (context, fconf, fresult,
-                                       first, last, total_size);
-         }
-         if (c == '\n' || c == '\r')
-            break;      // End of command line:
-      }
-
-      // Execute collected command:
-      {
-         // Allocate buffer for complete command line
-         char command[total_size + 1];
-
-         int i = 0;
-         while (first != NULL)
-         {
-            memcpy (command + i, first->data, first->length);   // Append list data to string buffer
-            i += first->length;
-            first = first->next;        // Move to next list item
-         }
-         // Add null-terminator
-         command[i] = 0;
-
-         // Execute command:
-         struct buffer_rmcios ret, p;
-         p.data = command;
-         p.length = total_size;
-         p.size = 0;
-         ret.data = response;
-         ret.size = sizeof (response);
-         ret.length = 0;
-         context->run_channel (context, context->control, write_rmcios, buffer_rmcios, (union param_rmcios) &ret, 1, (const union param_rmcios) &p);    // Execute command
-         //execute_str(command,response,sizeof(response)) ; //channel_enum("serial4") ) ;
-
-         i = 0;
-         if (fresult != NULL)
-            fprintf (fresult, "%s", response);
-
-         if (c == EOF)
-            return 0;
-         else
-            return 1;
-      }
-   }
-   return 1;
-}
-
-void execute_file (const struct context_rmcios *context,
-                   FILE * fconf, FILE * fresult)
-{
-   struct buffer_queue first;
-   char buffer[64];             // initial line buffer:
-   first.size = sizeof (buffer);
-   first.length = 0;
-   first.data = buffer;
-   first.next = NULL;
-
-   // Scan file until ERROR or EOF:
-   while (execute_file_queue (context, fconf, fresult, &first, &first, 0) != 0)
-   {
-      // Reset line buffer:
-      first.length = 0;
-      first.next = NULL;
-   }
-}
-
 void execute_str (const struct context_rmcios *context, const char *input,
                   char *output, unsigned int max_output_len)
 {
    struct buffer_rmcios return_buff;
    return_buff.data = output;
-   return_buff.length = 0;      // length of data currently in buffer
+   // length of data currently in buffer
+   return_buff.length = 0;      
    return_buff.size = 0;
    if (max_output_len > 0)
-      return_buff.size = max_output_len - 1;    // leave space for NULL
-   execute (context, input, buffer_rmcios, (union param_rmcios) &return_buff);  // Execute output to buffer
+      // leave space for NULL
+      return_buff.size = max_output_len - 1;  
+   execute (context, input, buffer_rmcios, (union param_rmcios) &return_buff); 
+   // Execute output to buffer
    if (return_buff.size > 0 && return_buff.data != NULL)
-      return_buff.data[return_buff.length] = 0; // add NULL termination char
+      // add NULL termination char
+      return_buff.data[return_buff.length] = 0; 
 }
+// data_handle_name,MAX_CLASSES,MAX_CHANNELS
+CREATE_STATIC_CHANNEL_SYSTEM_DATA (ch_sys_dat, 100, 500);  
 
 int main (int argc, char *argv[])
 {
@@ -316,29 +220,32 @@ int main (int argc, char *argv[])
    if (argc > 1)
       init_filename = argv[1];
 
-   hStdout = GetStdHandle (STD_OUTPUT_HANDLE);  // Get stdout handle (can be redirected)
-   //hStdin = GetStdHandle(STD_INPUT_HANDLE);  // Get stin handle (can be redirected)
+   // Get stdout handle (can be redirected)
+   hStdout = GetStdHandle (STD_OUTPUT_HANDLE);  
 
    if (argc > 2 && strcmp ("help", argv[1]) == 0)
-      freopen ("NULL", "w+", stdout);   // set stdout to console
+      // set stdout to console
+      freopen ("NULL", "w+", stdout);   
    else
-      freopen ("CONOUT$", "w+", stdout);        // set stdout to console
+      // set stdout to console
+      freopen ("CONOUT$", "w+", stdout);       
 
    printf ("\nRMCIOS - Reactive Multipurpose Control Input Output Systen\n["
            VERSION_STR "] \n");
    printf ("Copyright (c) 2018 Frans Korhonen\n");
    printf ("\nInitializing system:\r\n");
-   /////////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////
    // Init channel system
-   /////////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////
    const struct context_rmcios *context;
-   CREATE_STATIC_CHANNEL_SYSTEM_DATA (ch_sys_dat, 100, 500);    // data_handle_name,MAX_CLASSES,MAX_CHANNELS
-   set_channel_system_data ((struct ch_system_data *) &ch_sys_dat);     // init channel api system
+  
+   // init channel api system
+   set_channel_system_data ((struct ch_system_data *) &ch_sys_dat);     
    context = get_rmios_context ();
 
-   ///////////////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////
    // Load DLL modules :
-   ///////////////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////
    DIR *d;
    struct dirent *dir;
    char mname[1024];
@@ -348,11 +255,11 @@ int main (int argc, char *argv[])
                               mname,    // _Out_    LPTSTR  lpFilename,
                               sizeof (mname));  //_In_     DWORD   nSize
    if (mlen == 0)
-      printf
-         ("ERROR! Could not get program path! Program path possibly too long...\n");
+      printf ("ERROR! Could not get program path!"
+              " Program path possibly too long...\n");
 
    int i;
-   for (i = mlen - 2; i > 0; i--)       // Remove the executable name
+   for (i = mlen - 2; i > 0; i--)  // Remove the executable name
    {
       if (mname[i] == '\\' || mname[i] == '/')
       {
@@ -374,7 +281,9 @@ int main (int argc, char *argv[])
          if (slen > 4 &&
              dir->d_name[slen - 4] == '.' &&
              dir->d_name[slen - 3] == 'd' &&
-             dir->d_name[slen - 2] == 'l' && dir->d_name[slen - 1] == 'l')
+             dir->d_name[slen - 2] == 'l' && 
+             dir->d_name[slen - 1] == 'l')
+         // It's a .dll
          {
             strcpy (dll_name, "modules/");
             strcat (dll_name, dir->d_name);
@@ -392,7 +301,8 @@ int main (int argc, char *argv[])
                    dll_name);
             else
             {
-               dll_init (context);      // initialize channels
+               // initialize the module
+               dll_init (context);      
             }
          }
       }
@@ -401,19 +311,17 @@ int main (int argc, char *argv[])
 
    printf ("\r\nModules processed.\r\n\r\n");
 
-
-   ///////////////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
    // stdio channel
-   //////////////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
    stdin_id =
       create_channel_str (context, "stdio", (class_rmcios) stdio_class_func,
                           NULL);
    execute_str (context, "link stdio control", NULL, 0);
 
    stdin_linked_channel = linked_channels (context, stdin_id);
-   printf ("stdin_linked:%d\n", stdin_linked_channel);
 
-   //////////////////////////////////////////////////
+   /////////////////////////////////////////////////////
    // channel help readout
    /////////////////////////////////////////////////////
    if (argc > 2 && strcmp ("help", argv[1]) == 0)
@@ -429,40 +337,50 @@ int main (int argc, char *argv[])
       return 1;
    }
 
-   write_str (context, stdin_id, "testing\n", 0);
-   ///////////////////////////////////////////////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////
    // initial configuration 
-   /////////////////////////////////////////////////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////
    FILE *fconf;
-   printf ("Executing: %s\r\n", init_filename);
    fconf = fopen (init_filename, "r");
    if (fconf != NULL)
    {
-      //execute_file(fconf,stdout) ;
-      execute_file (context, fconf, 0);
-      fclose (fconf);
+       const char *command="read as control file \"" ;
+       char buffer[strlen(init_filename)+strlen(command)+1] ;
+       buffer[0]=0;
+       strcat(buffer,command) ;
+       strcat(buffer,init_filename) ;
+       strcat(buffer,"\"") ;
+       char *s=buffer;
+       while(*s!=0)
+       {
+         if(*s=='\\') *s='/' ; // Replace windows \ into /
+         s++ ;
+       }
+       execute_str (context, buffer, NULL, 0);
+       
+       fclose (fconf);
    }
    else
       printf ("Could not open initial configuration: %s\n", init_filename);
 
-   ///////////////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////
    // configuration logging (conf.log)
-   ///////////////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////
    char c;
    printf ("Logging configuration: conf.log\r\n");
-   FILE *conflog = fopen ("conf.log", "a");     // Log the configuration
+   // Log the configuration
+   FILE *conflog = fopen ("conf.log", "a");     
    if (conflog != NULL)
    {
       char buffer[256];
       buffer[0] = 0;
-      //time_t seconds=time(NULL)+timezone_offset  ;
-      //
       read_str (context, channel_enum (context, "rtc_str"), buffer, 256);
       fprintf (conflog,
                "\n\n# RESTART at %s #############################\n", buffer);
 
       // Local filesystem
-      fconf = fopen (init_filename, "r");       // Log the configuration
+      fconf = fopen (init_filename, "r");      
+      // Log the configuration
       if (fconf != NULL)
       {
          fprintf (conflog, "# Config from /local/conf.ini:\n");
@@ -472,16 +390,17 @@ int main (int argc, char *argv[])
       }
       else
          printf ("Could not open for reading: %s\r\n", init_filename);
-      fclose (conflog); // Log the configuration
+      // Log the configuration
+      fclose (conflog); 
    }
    else
       printf ("Could not open for appending: conf.log \r\n");
 
    printf ("\r\nSystem initialized!\r\n");
 
-   //////////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////
    // reception loop
-   //////////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////
    char s[2];
    s[1] = 0;
    while (1)

@@ -6,22 +6,27 @@
 call "toolpath.bat"
 
 :: Settings
-set PROJECTDIR=%CD%
-set FILENAME=%~n0
+set SCRIPTDIR=%CD%
+cd ..
 
+set FILENAME=windows-serial-module
 set OUTPUT_DIR=..\modules
 set OUTPUT_FILE=%FILENAME%.dll
 
+:: create VERSION_STR CFLAG -macro: 
+set PROJECTDIR=%CD%
+set SRC_DIR=RMCIOS-Windows-module
+set INTERFACE_DIR=RMCIOS-interface
+call "%SCRIPTDIR%\version_str.bat"
+
 : Set directories and files:
-set SRC_DIR=RMCIOS-Windows-module\
-set INTERFACE_DIR=RMCIOS-interface\
 set SOURCES=%SRC_DIR%\serial_channels.c 
 set SOURCES=%SOURCES% string-conversion.c 
 set SOURCES=%SOURCES% %INTERFACE_DIR%\RMCIOS-functions.c
-call "version_str.bat"
 
 :: compiler flags
-set CFLAGS=%CFLAGS% -s -Os
+set CFLAGS=%CFLAGS% -s -O0
+set CFLAGS=%CFLAGS% -g
 set CFLAGS=%CFLAGS% -static-libgcc 
 set CFLAGS=%CFLAGS% -shared -Wl,--subsystem,windows 
 set CFLAGS=%CFLAGS% -lwinmm

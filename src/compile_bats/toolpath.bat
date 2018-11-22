@@ -3,7 +3,7 @@
 :: Tool locations are set here. Other scripts call this.
 :: ******************************************************
 
-set TOOLPATH=..\..\
+set TOOLPATH=..\..\..\
 
 set GITDIR=%TOOLPATH%PortableGit\bin\
 set COMPILER_PATH=%TOOLPATH%minGW\bin\

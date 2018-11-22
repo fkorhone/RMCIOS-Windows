@@ -6,23 +6,29 @@
 call "toolpath.bat"
 
 :: Settings
-set PROJECTDIR=%CD%
-set FILENAME=%~n0
+set SCRIPTDIR=%CD%
+cd ..
 
+set FILENAME=windows-gui-module
 set OUTPUT_DIR=..\modules
 set OUTPUT_FILE=%FILENAME%.dll
 
+:: create VERSION_STR CFLAG -macro: 
+set SRC_DIR=RMCIOS-Windows-module
+set INTERFACE_DIR=RMCIOS-interface
+set PROJECTDIR=%CD%
+call "%SCRIPTDIR%\version_str.bat"
+
 : Set directories and sources:
-set SRC_DIR=RMCIOS-Windows-module\
 set INTERFACE_DIR=RMCIOS-interface\
-set SOURCES=%SRC_DIR%windows_gui_channels.c
+set SOURCES=%SRC_DIR%\windows_gui_channels.c
 set SOURCES=%SOURCES% string-conversion.c 
 set SOURCES=%SOURCES% %INTERFACE_DIR%\RMCIOS-functions.c
-:: create VERSION_STR CFLAG -macro
-call "version_str.bat"
 
 :: compiler flags
-set CFLAGS=%CFLAGS% -s -Os
+::set CFLAGS=%CFLAGS% -s 
+set CFLAGS=%CFLAGS% -O0
+set CFLAGS=%CFLAGS% -g
 set CFLAGS=%CFLAGS% -static-libgcc 
 set CFLAGS=%CFLAGS% -shared -Wl,--subsystem,windows 
 set CFLAGS=%CFLAGS% -lwinmm
