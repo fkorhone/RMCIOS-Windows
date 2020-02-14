@@ -2,6 +2,23 @@
 NOTE:
 RMCIOS is still under development and changes in interfaces are likely to be expected.
 
+## Before Compiling
+Compile scripts require git and gcc to operate properly.
+
+### GIT installed
+You need to have git installed in path or at location defined in src/toolpath.bat. default is realative to repository root: ../PortableGit/bin/
+git can most likely be downloaded from: https://git-scm.com/download/win
+
+### GCC installed
+You need to have GCC or equivalent C-compiler installed in path or at location defined in src/toolpath.bat deftult is relative to repository root: ../mingw/bin/
+GCC can most likely be installed using mingw-get-setup.exe installer from http://www.mingw.org/
+
+### Clone submodules before compiling:
+execute from command prompt:
+git submodule update --init --recursive
+
+or use src/compile\_bats/checkout\_submodules.bat
+
 ## Compiling
 Compiler used is GCC(MinGW). Define compiler and git path inside src/compile\_bats/toolpath.bat and execute: src/compile\_all.bat
 
