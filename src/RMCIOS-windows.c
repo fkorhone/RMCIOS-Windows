@@ -59,11 +59,11 @@ DWORD dwRead, dwWritten;
 
 // Channel for setting stdinput destination. And writing to stdout
 void stdio_class_func (void *this,
-                       const struct context_rmcios *context, int id,
-                       enum function_rmcios function,
-                       enum type_rmcios paramtype,
-                       union param_rmcios returnv,
-                       int num_params, const union param_rmcios param)
+                        const struct context_rmcios *context, int id,
+                        enum function_rmcios function,
+                        enum type_rmcios paramtype,
+                        struct combo_rmcios *returnv,
+                        int num_params, const union param_rmcios param)
 {
    int plen;
    const char *s;
@@ -88,11 +88,11 @@ void stdio_class_func (void *this,
 // Channel for printf                                                            //
 ///////////////////////////////////////////////////////////////////////////////////
 void stdout_func (void *data,
-                  const struct context_rmcios *context, int id,
-                  enum function_rmcios function,
-                  enum type_rmcios paramtype,
-                  union param_rmcios returnv,
-                  int num_params, const union param_rmcios param)
+                        const struct context_rmcios *context, int id,
+                        enum function_rmcios function,
+                        enum type_rmcios paramtype,
+                        struct combo_rmcios *returnv,
+                        int num_params, const union param_rmcios param)
 {
    switch (function)
    {
@@ -115,27 +115,24 @@ void mem_func (void *data,
                const struct context_rmcios *context, int id,
                enum function_rmcios function,
                enum type_rmcios paramtype,
-               union param_rmcios returnv,
+               struct combo_rmcios *returnv,
                int num_params, const union param_rmcios param)
+
 {
    switch (function)
    {
    case help_rmcios:
       // MEMORY INTERFACE: 
-      return_string (context, paramtype, returnv,
-                     " read mem \r\n -read ammount of free memory\r\n");
-      return_string (context, paramtype, returnv,
-                     " write mem \r\n -read memory allocation block size\r\n");
-      return_string (context, paramtype, returnv,
-                     " write mem n_bytes \r\n Allocate n bytes of memory\r\n");
-      return_string (context, paramtype, returnv,
-                     "   -Returns address of the allocated memory\r\n");
-      return_string (context, paramtype, returnv,
-                     "   -On n_bytes < 0 allocates complete allocation blocks\r\n");
-      return_string (context, paramtype, returnv,
-                     "   -returns 0 length on failure\r\n");
-      return_string (context, paramtype, returnv,
-                     " write mem (empty) addr(buffer/id)  \r\n -free memory pointed by addr in buffer\r\n");
+      return_string (context, returnv,
+                     " read mem \r\n -read ammount of free memory\r\n"
+                     " write mem \r\n -read memory allocation block size\r\n"
+                     " write mem n_bytes \r\n Allocate n bytes of memory\r\n"
+                     "   -Returns address of the allocated memory\r\n"
+                     "   -On n_bytes < 0 allocates complete allocation blocks\r\n"
+                     "   -returns 0 length on failure\r\n"
+                     " write mem (empty) addr(buffer/id)  \r\n"
+                     "  -free memory pointed by addr in buffer\r\n"
+                     );
       break;
    case read_rmcios:
       if (num_params == 0)      // read ammount of free memory
@@ -150,11 +147,11 @@ void mem_func (void *data,
       } // Read memory allocation block size
       if (num_params == 1)      // Allocate n bytes of memory
       {
-         void *ptr = malloc (param_to_integer (context, paramtype,
-                                               (const union param_rmcios)
-                                               param, 0));
-         //printf("allocated %x\n",ptr) ;
-         return_binary (context, paramtype, returnv, (char *) &ptr,
+         int size = param_to_integer (context, paramtype,
+                                      (const union param_rmcios)
+                                      param, 0);
+         void *ptr = malloc (size);
+         return_binary (context, returnv, (char *) &ptr,
                         sizeof (ptr));
       }
       if (num_params > 1)
@@ -174,7 +171,6 @@ void mem_func (void *data,
             char *ptr = NULL;
             param_to_binary (context, paramtype, param, 1,
                              sizeof (ptr), (char *) &ptr);
-            //printf("freeing: %x\n",ptr) ;
             if (ptr != NULL)
                free (ptr);
          }
@@ -200,10 +196,15 @@ void execute_str (const struct context_rmcios *context, const char *input,
    // length of data currently in buffer
    return_buff.length = 0;      
    return_buff.size = 0;
+   struct combo_rmcios rvalue= {
+      .paramtype = buffer_rmcios,
+      .num_params = 1,
+      .param = &return_buff
+   };
    if (max_output_len > 0)
       // leave space for NULL
       return_buff.size = max_output_len - 1;  
-   execute (context, input, buffer_rmcios, (union param_rmcios) &return_buff); 
+   execute (context, input, &rvalue); 
    // Execute output to buffer
    if (return_buff.size > 0 && return_buff.data != NULL)
       // add NULL termination char
