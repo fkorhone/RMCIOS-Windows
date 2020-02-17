@@ -19,3 +19,6 @@
 [submodule "src/RMCIOS-Labjack-module"]
 	path = src/RMCIOS-Labjack-module
 	url = https://github.com/fkorhone/RMCIOS-Labjack-module.git
+[submodule "src/RMCIOS-Python"]
+	path = src/RMCIOS-Python
+	url = https://github.com/fkorhone/RMCIOS-Python.git
