@@ -1,13 +1,11 @@
-@echo off
-:: **************************************************
-:: Basic compile script. 
-:: Compiles c source with same basename.
-:: ***************************************************
-call "toolpath.bat"
+:: parameter to skip user delay and pauses after compilation in automated runs
+set EXIT_FAST="%~1"
 
-:: Settings
-set SCRIPTDIR=%CD%
-cd ../
+:: Setup environment variables
+set ORIG_DIR=%CD%
+set SCRIPTDIR=%~dp0
+call "toolpath.bat"
+cd %SCRIPTDIR%\..\
 
 set FILENAME=run_program
 set PROJECTDIR=%CD%
@@ -27,14 +25,19 @@ IF EXIST %OUTPUT_DIR%\%OUTPUT_FILE% (del %OUTPUT_DIR%\%OUTPUT_FILE%)
 echo compiling %SOURCES%
 gcc %SOURCES% -o %OUTPUT_DIR%\%FILENAME%.dll %CFLAGS%
 
+:: User notification about compilation status:
 IF NOT EXIST %OUTPUT_DIR%\%OUTPUT_FILE% (
     echo COMPILE ERROR!
-    pause
-    exit
+    IF %EXIT_FAST% == "" (
+       pause
+    )
+) ELSE (
+    echo %OUTPUT_DIR%\%OUTPUT_FILE% ready
+    IF %EXIT_FAST% == "" (
+       timeout /T 5
+    )
 )
 
-echo %OUTPUT_DIR%\%OUTPUT_FILE% ready
-timeout /T 5
-exit
-
+:: Restore working dir
+cd %ORIG_DIR%
 
