@@ -33,20 +33,24 @@ set CFLAGS=%CFLAGS% -shared
 set CFLAGS=%CFLAGS% -Wl,--subsystem,windows
 set CFLAGS=%CFLAGS% -I%CD%\%INTERFACE_DIR%\
 set CFLAGS=%CFLAGS% -I%PYTHONHOME%\include
-set CFLAGS=%CFLAGS% -L%PYTHONHOME%\libs
+::set CFLAGS=%CFLAGS% -L%PYTHONHOME%\libs
 set CFLAGS=%CFLAGS% -D API_ENTRY_FUNC="__declspec(dllexport) __cdecl"
 set CFLAGS=%CFLAGS% -Wall
 set CFLAGS=%CFLAGS% -Wextra
 set CFLAGS=%CFLAGS% -Wno-unused-parameter
 set CFLAGS=%CFLAGS% -Wno-sign-compare
 set CFLAGS=%CFLAGS% -Wno-switch
-set CFLAGS=%CFLAGS% -lpython38
+::set CFLAGS=%CFLAGS% %PYTHONHOME%/libs/python38.lib
+set CFLAGS=%CFLAGS% libpython38.a 
 
 :: Remove earlier produced file. (clean)
 IF EXIST %OUTPUT_DIR%\%OUTPUT_FILE% (del %OUTPUT_DIR%\%OUTPUT_FILE%)
 
 :: Compile the program
 echo compiling %SOURCES%
+gendef %PYTHONHOME%\python38.dll
+::dlltool --as-flags=--64 -m i386:x86-64 -k --output-lib libpython38.a --input-def python38.def
+dlltool -k --output-lib libpython38.a --input-def python38.def
 gcc %SOURCES% -o %OUTPUT_DIR%\%OUTPUT_FILE% %CFLAGS%
 
 IF NOT EXIST %OUTPUT_DIR%\%OUTPUT_FILE% (
@@ -54,7 +58,6 @@ IF NOT EXIST %OUTPUT_DIR%\%OUTPUT_FILE% (
     pause
     exit
 )
-pause
 
 echo %OUTPUT_DIR%\%OUTPUT_FILE% ready
 timeout /T 5
