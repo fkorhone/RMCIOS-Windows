@@ -1,16 +1,17 @@
-@echo off
+set EXIT_FAST="%~1"
 
-cd compile_bats
-start compile_base-module.bat
-start compile_std-module.bat
-start compile_windows-module.bat
-start compile_windows-serial-module.bat
-start compile_windows-gui-module 
-start compile_windows-pipe-module 
-start compile_windows-program-module 
-start run_program 
+set ORIGINAL_DIR=%CD%
+cd %~dp0\compile_bats
 
-echo "Wait until all modules have been compiled. Press key to compile+run main module"
-pause
-start compile_RMCIOS-windows.bat
+call compile_base-module.bat %EXIT_FAST%
+call compile_std-module.bat %EXIT_FAST%
+call compile_windows-module.bat %EXIT_FAST%
+call compile_windows-serial-module.bat %EXIT_FAST%
+call compile_windows-gui-module.bat %EXIT_FAST%
+call compile_windows-pipe-module.bat %EXIT_FAST%
+call compile_windows-program-module.bat %EXIT_FAST%
+call run_program.bat %EXIT_FAST%
+call compile_RMCIOS-windows.bat %EXIT_FAST%
+
+cd %ORIGINAL_DIR%
 
