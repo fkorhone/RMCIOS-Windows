@@ -1,0 +1,59 @@
+name: Create Unstable Release
+
+on:
+  push:
+    # branches to consider in the event; optional, defaults to all
+    branches:
+       - master
+
+jobs:
+  build:
+    name: Create Release
+
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: clone submodules
+      run: git submodule update --init
+
+    - name: compile
+      run: src\compile-all.bat 1
+
+    - name: make dir
+      run: mkdir artifacts
+
+    - name: copy
+      run: copy RMCIOS.exe artifacts\
+    - name: copy
+      run: copy run_program.dll artifacts\
+    - name: copy
+      run: copy LICENSE artifacts\
+    - name: copy
+      run: Xcopy /E /I modules artifacts\modules\
+    - name: copy
+      run: Xcopy /E /I examples artifacts\examples\
+
+    - name: Archive Release
+      run: 7z a -tzip RMCIOS-windows.zip .\artifacts\*
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+          tag_name: ${{ github.ref }}
+          release_name: Beta Release ${{ github.ref }}
+          draft: true
+          prerelease: true
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above
+          asset_path: ./RMCIOS-Windows.zip
+          asset_name: RMCIOS-Windows.zip
+          asset_content_type: application/zip
