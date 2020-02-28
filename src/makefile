@@ -27,7 +27,7 @@ win32-artifacts:
 	$(MAKE) -f $(MKDIR)/run_program.mk OUTPUT_PATH=../artifacts/win32
 
 win64-artifacts:
-	$(MAKE) -f $(MKDIR)/rmcios.mk NIDAQDEF=NIDAQmx64.def OUTPUT_PATH=../artifacts/win64 artifacts
+	$(MAKE) -f $(MKDIR)/rmcios.mk NIDAQDEF=NIDAQmx64.def LJMDEF=LabJack64.def OUTPUT_PATH=../artifacts/win64 artifacts
 	$(MAKE) -f $(MKDIR)/run_program.mk OUTPUT_PATH=../artifacts/win64
 
 cross-win32-artifacts:
@@ -36,7 +36,7 @@ cross-win32-artifacts:
 	$(MAKE) -f $(MKDIR)/run_program.mk GCC=$(GCC_CROSS_WIN64) OUTPUT_PATH=../artifacts/win32 FILENAME=run_program64
 
 cross-win64-artifacts:
-	$(MAKE) -f $(MKDIR)/rmcios.mk GCC=$(GCC_CROSS_WIN64) DLLTOOL=$(DLLTOOL_CROSS_WIN64) NIDAQDEF=NIDAQmx64.def OUTPUT_PATH=../artifacts/win64 artifacts
+	$(MAKE) -f $(MKDIR)/rmcios.mk GCC=$(GCC_CROSS_WIN64) DLLTOOL=$(DLLTOOL_CROSS_WIN64) NIDAQDEF=NIDAQmx64.def LJMDEF=LabJackM64.def OUTPUT_PATH=../artifacts/win64 artifacts
 	$(MAKE) -f $(MKDIR)/run_program.mk GCC=$(GCC_CROSS_WIN32) OUTPUT_PATH=../artifacts/win64
 	$(MAKE) -f $(MKDIR)/run_program.mk GCC=$(GCC_CROSS_WIN64) OUTPUT_PATH=../artifacts/win64 FILENAME=run_program64
 

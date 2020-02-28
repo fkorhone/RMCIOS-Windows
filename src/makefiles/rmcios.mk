@@ -1,12 +1,14 @@
 MAKE?=make
 GCC?=gcc
 GENDATE?=
+DLLTOOL?=dlltool
 MAKEFILEDIR=makefiles
 OUTPUT_PATH?=../
 NIDAQDEF?=NIDAQmx.def
+LJMDEF?=LabJackM.def
 export
 
-all: rmcios nidaqmx-module base-module std-module windows-module serial-module socket-module gui-module pipe-module program-module
+all: rmcios nidaqmx-module labjack-module ljm-module base-module std-module windows-module serial-module socket-module gui-module pipe-module program-module
 
 gentime:
 	$(GENDATE)
@@ -20,6 +22,12 @@ rmcios: gentime
 
 nidaqmx-module: gentime 
 	$(MAKE) -f $(MAKEFILEDIR)/nidaqmx-module.mk LINKDEF=$(NIDAQDEF)
+
+labjack-module: gentime
+	$(MAKE) -f $(MAKEFILEDIR)/labjack-module.mk
+
+ljm-module: gentime
+	$(MAKE) -f $(MAKEFILEDIR)/ljm-module.mk LINKDEF=$(LJMDEF)
 
 base-module: gentime 
 	$(MAKE) -f $(MAKEFILEDIR)/base-module.mk
