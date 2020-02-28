@@ -16,3 +16,6 @@
 [submodule "src/RMCIOS-NI-module"]
 	path = src/RMCIOS-NI-DAQmx-module
 	url = https://github.com/fkorhone/RMCIOS-NI-module.git
+[submodule "src/RMCIOS-Labjack-module"]
+	path = src/RMCIOS-Labjack-module
+	url = https://github.com/fkorhone/RMCIOS-Labjack-module.git
