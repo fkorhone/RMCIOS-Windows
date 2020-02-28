@@ -1,0 +1,47 @@
+name: C/C++ CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: install binutils
+      run: sudo apt install binutils-mingw-w64-i686
+    - name: install gcc win32
+      run: sudo apt install gcc-mingw-w64-i686
+    - name: install gcc win64
+      run: sudo apt install gcc-mingw-w64-x86-64
+    
+    - uses: actions/checkout@v2
+    - name: clone submodules
+      run: git submodule update --init
+
+    - name: compile win32
+      run: make -C src cross-win32
+
+    - name: create dir
+      run: mkdir artifacts
+
+    - name: copy
+      run: cp RMCIOS.exe artifacts/
+    - name: copy
+      run: cp run_program.dll artifacts/
+    - name: copy
+      run: cp run_program64.dll artifacts/
+    - name: copy
+      run: cp LICENSE artifacts/
+    - name: copy
+      run: cp -r modules artifacts/modules/
+    - name: copy
+      run: cp -r examples artifacts/examples/
+
+    - uses: actions/upload-artifact@v1
+      name: upload
+      with:
+        name: RMCIOS-win32-binary
+        path: artifacts   
+ 
+

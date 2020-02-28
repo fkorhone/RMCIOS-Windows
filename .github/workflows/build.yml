@@ -13,7 +13,7 @@ jobs:
       run: git submodule update --init
 
     - name: compile
-      run: src\compile-all.bat 1
+      run: make -C src rmcios
 
     - name: make dir
       run: mkdir artifacts

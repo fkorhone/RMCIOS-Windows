@@ -11,6 +11,7 @@ call compile_windows-gui-module.bat %EXIT_FAST%
 call compile_windows-pipe-module.bat %EXIT_FAST%
 call compile_windows-program-module.bat %EXIT_FAST%
 call compile_windows-socket-module.bat %EXIT_FAST%
+call compile_nidaqmx-module.bat %EXIT_FAST%
 call run_program.bat %EXIT_FAST%
 call compile_RMCIOS-windows.bat %EXIT_FAST%
 
