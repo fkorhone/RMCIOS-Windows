@@ -1,7 +1,15 @@
-@echo off
 :: ******************************************************
 :: Tool locations are set here. Other scripts call this.
 :: ******************************************************
+
+
+IF "%TOOLPATH_SET%" == "set" (
+  goto :eof 
+)
+set TOOLPATH_SET="set"
+
+set MAKE=make
+set MAKEFILEDIR=makefiles
 
 set TOOLPATH=..\..\..\
 
@@ -24,5 +32,6 @@ cd %PROJECTDIR%
 cd %INDENTER_DIR%
 set PATH=%PATH%;%CD%
 cd %PROJECTDIR%
+
 
 
