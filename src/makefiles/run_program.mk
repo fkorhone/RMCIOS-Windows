@@ -1,5 +1,5 @@
 FILENAME?=run_program
-OUTPUT_DIR?=..
+OUTPUT_DIR=$(OUTPUT_PATH)
 OUTPUT_FILE?=$(FILENAME).dll
 SOURCES:=run_program.c
 

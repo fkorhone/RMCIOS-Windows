@@ -6,8 +6,9 @@ CFLAGS+=-I$(SRC_DIR)/linklib
 CC?=gcc
 DLLTOOL?=dlltool
 MAKE?=make
+LINKDEF?=NIDAQmx.def
 export
 
 compile:
-	$(DLLTOOL) -m i386 -k -d $(SRC_DIR)/linklib/NIDAQmx.def -l libnidaqmx.a 
+	$(DLLTOOL) -k -d $(SRC_DIR)/linklib/$(LINKDEF) -l libnidaqmx.a 
 	$(MAKE) -f module_dll.mk compile

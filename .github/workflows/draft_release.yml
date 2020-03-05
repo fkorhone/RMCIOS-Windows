@@ -1,16 +1,16 @@
-name: Create Unstable Release
+name: Create release draft
 
 on:
   push:
-    # branches to consider in the event; optional, defaults to all
-    branches:
+     # branches to consider in the event; optional, defaults to all
+     branches:
        - master
 
 jobs:
   build:
     name: Create Release
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     
     steps:
     - name: install binutils
@@ -25,24 +25,16 @@ jobs:
       run: git submodule update --init
 
     - name: compile win32
-      run: make -C src cross-win32
+      run: make -C src cross-win32-artifacts
 
-    - name: make dir
-      run: mkdir artifacts
+    - name: compile win64
+      run: make -C src cross-win64-artifacts
 
-    - name: copy
-      run: copy RMCIOS.exe artifacts\
-    - name: copy
-      run: copy run_program.dll artifacts\
-    - name: copy
-      run: copy LICENSE artifacts\
-    - name: copy
-      run: Xcopy /E /I modules artifacts\modules\
-    - name: copy
-      run: Xcopy /E /I examples artifacts\examples\
+    - name: Archive 32bit Release
+      run: cd artifacts/win32; zip -r ../../RMCIOS-win32.zip *
 
-    - name: Archive Release
-      run: 7z a -tzip RMCIOS-windows.zip .\artifacts\*
+    - name: Archive 64bit Release
+      run: cd artifacts/win64; zip -r ../../RMCIOS-win64.zip *
 
     - name: Create Release
       id: create_release
@@ -54,13 +46,24 @@ jobs:
           release_name: Beta Release ${{ github.ref }}
           draft: true
           prerelease: true
-    - name: Upload Release Asset
-      id: upload-release-asset 
+    - name: Upload 32bit Release Asset
+      id: upload-32bit-release-asset 
       uses: actions/upload-release-asset@v1
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above
-          asset_path: ./RMCIOS-Windows.zip
-          asset_name: RMCIOS-Windows.zip
+          asset_path: ./RMCIOS-win32.zip
+          asset_name: RMCIOS-win32.zip
+          asset_content_type: application/zip
+
+    - name: Upload 64bit Release Asset
+      id: upload-64bt-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above
+          asset_path: ./RMCIOS-win64.zip
+          asset_name: RMCIOS-win64.zip
           asset_content_type: application/zip

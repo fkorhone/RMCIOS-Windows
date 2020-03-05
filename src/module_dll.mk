@@ -8,7 +8,7 @@ SOURCES+= $(INTERFACE_DIR)/RMCIOS-functions.c
 include version_str.mk
 
 :: Output
-OUTPUT_DIR:=../modules
+OUTPUT_DIR:=$(OUTPUT_PATH)/modules
 OUTPUT_FILE:=$(FILENAME).dll
 
 # Compiler flags

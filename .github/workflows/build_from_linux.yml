@@ -20,28 +20,21 @@ jobs:
       run: git submodule update --init
 
     - name: compile win32
-      run: make -C src cross-win32
+      run: make -C src cross-win32-artifacts
 
-    - name: create dir
-      run: mkdir artifacts
-
-    - name: copy
-      run: cp RMCIOS.exe artifacts/
-    - name: copy
-      run: cp run_program.dll artifacts/
-    - name: copy
-      run: cp run_program64.dll artifacts/
-    - name: copy
-      run: cp LICENSE artifacts/
-    - name: copy
-      run: cp -r modules artifacts/modules/
-    - name: copy
-      run: cp -r examples artifacts/examples/
+    - name: compile win64
+      run: make -C src cross-win64-artifacts
 
     - uses: actions/upload-artifact@v1
-      name: upload
+      name: upload win32
       with:
         name: RMCIOS-win32-binary
-        path: artifacts   
- 
+        path: artifacts/win32
+
+    - uses: actions/upload-artifact@v1
+      name: upload win64
+      with:
+        name: RMCIOS-win64-binary
+        path: artifacts/win64
+
 

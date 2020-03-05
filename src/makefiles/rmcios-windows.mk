@@ -8,7 +8,7 @@ SOURCES+= string-conversion.c
 SOURCES+= $(SRC_DIR)/RMCIOS-system.c 
 SOURCES+=$(INTERFACE_DIR)/RMCIOS-functions.c
 
-OUTPUT_DIR?=..
+OUTPUT_DIR:=$(OUTPUT_PATH)
 OUTPUT_FILE?=RMCIOS.exe
 
 CFLAGS=
