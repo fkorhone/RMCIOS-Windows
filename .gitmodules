@@ -13,6 +13,6 @@
 [submodule "src/RMCIOS-std-module"]
 	path = src/RMCIOS-std-module
 	url = https://github.com/fkorhone/RMCIOS-std-module.git
-[submodule "src/RMCIOS-NI-DAQmx-module"]
+[submodule "src/RMCIOS-NI-module"]
 	path = src/RMCIOS-NI-DAQmx-module
-	url = https://github.com/fkorhone/RMCIOS-NI-DAQmx-module.git
+	url = https://github.com/fkorhone/RMCIOS-NI-module.git
