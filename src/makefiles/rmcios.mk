@@ -8,7 +8,7 @@ NIDAQDEF?=NIDAQmx.def
 LJMDEF?=LabJackM.def
 export
 
-all: rmcios nidaqmx-module labjack-module ljm-module base-module std-module windows-module serial-module socket-module gui-module pipe-module program-module
+all: rmcios nidaqmx-module labjack-module ljm-module python-module base-module std-module windows-module serial-module socket-module gui-module pipe-module program-module
 
 gentime:
 	$(GENDATE)
@@ -28,6 +28,9 @@ labjack-module: gentime
 
 ljm-module: gentime
 	$(MAKE) -f $(MAKEFILEDIR)/ljm-module.mk LINKDEF=$(LJMDEF)
+	
+python-module: gentime
+	$(MAKE) -f $(MAKEFILEDIR)/python-module.mk
 
 base-module: gentime 
 	$(MAKE) -f $(MAKEFILEDIR)/base-module.mk
