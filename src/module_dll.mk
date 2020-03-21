@@ -13,7 +13,8 @@ OUTPUT_FILE:=$(FILENAME).dll
 
 # Compiler flags
 # CFLAGS+=" -s" 
-CFLAGS+= -O0 
+CFLAGS+=-O0 
+CFLAGS+=-ggdb3
 # CFLAGS+=" -flto"
 # CFLAGS+=" -g"
 CFLAGS+=-DVERSION_STR=\"$(VERSION_STR)\"
