@@ -251,6 +251,11 @@ int main (int argc, char *argv[])
    struct dirent *dir;
    char mname[1024];
    int mlen;
+
+   // Dont show dialog boxes when dlls fail to load:
+   UINT oldMode = SetErrorMode(0);
+   SetErrorMode(oldMode | SEM_FAILCRITICALERRORS | SEM_NOOPENFILEERRORBOX);
+
    // Get the actual program executable position
    mlen = GetModuleFileNameA (NULL,     // _In_opt_ HMODULE hModule,
                               mname,    // _Out_    LPTSTR  lpFilename,
