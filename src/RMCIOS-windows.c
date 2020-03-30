@@ -191,7 +191,7 @@ struct buffer_queue
 void execute_str (const struct context_rmcios *context, const char *input,
                   char *output, unsigned int max_output_len)
 {
-   struct buffer_rmcios return_buff;
+   struct buffer_rmcios return_buff = {0};
    return_buff.data = output;
    // length of data currently in buffer
    return_buff.length = 0;      
