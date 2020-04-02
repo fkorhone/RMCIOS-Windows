@@ -8,5 +8,5 @@ LINKDEF?=LabJackM.def
 export
 
 compile:
-	$(DLLTOOL) -d $(SRC_DIR)/linklib/${LINKDEF} -l liblabjackm.a 
+	$(DLLTOOL) -k -d $(SRC_DIR)/linklib/${LINKDEF} -l liblabjackm.a 
 	$(MAKE) -f module_dll.mk compile
