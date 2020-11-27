@@ -414,6 +414,6 @@ int main (int argc, char *argv[])
       s[0] = getchar ();
       s[1] = 0;
       if (stdin_linked_channel != 0)
-         write_str (context, stdin_linked_channel, s, stdin_id);
+         write_str (context, context->control, s, stdin_id);
    }
 }
