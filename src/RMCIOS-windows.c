@@ -32,6 +32,7 @@ along with RMCIOS.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "RMCIOS-system.h"
+#include "std-context.h"
 
 #include <stdio.h>
 #include <windows.h>
@@ -116,7 +117,9 @@ void execute_str (const struct context_rmcios *context, const char *input,
       return_buff.data[return_buff.length] = 0; 
 }
 // data_handle_name,MAX_CLASSES,MAX_CHANNELS
-CREATE_STATIC_CHANNEL_SYSTEM_DATA (ch_sys_dat, 100, 500);  
+#define CLASSES 100 
+#define CHANNELS 500
+char ch_sys_data[(1<<16)];
 
 int main (int argc, char *argv[])
 {
@@ -140,14 +143,16 @@ int main (int argc, char *argv[])
            VERSION_STR "] \n");
    printf ("Copyright (c) 2018 Frans Korhonen\n");
    printf ("\nInitializing system:\r\n");
+
    ////////////////////////////////////////////////////////////////////////
-   // Init channel system
+   // Setup channel system
    ////////////////////////////////////////////////////////////////////////
-   const struct context_rmcios *context;
+   const struct context_rmcios context;
   
    // init channel api system
-   set_channel_system_data ((struct ch_system_data *) &ch_sys_dat);     
-   context = get_rmios_context ();
+   setup_channel_system_data (&context, sizeof(ch_sys_data), ch_sys_data, CLASSES, CHANNELS);     
+   setup_std_context(&context);
+   setup_rmcios_context (&context);
 
    //////////////////////////////////////////////////////////////////////
    // Load DLL modules :
@@ -213,7 +218,7 @@ int main (int argc, char *argv[])
             else
             {
                // initialize the module
-               dll_init (context);      
+               dll_init (&context);      
             }
          }
       }
@@ -226,11 +231,11 @@ int main (int argc, char *argv[])
    // stdio channel
    //////////////////////////////////////////////////////////////////////////
    stdin_id =
-      create_channel_str (context, "stdio", (class_rmcios) stdio_class_func,
+      create_channel_str (&context, "stdio", (class_rmcios) stdio_class_func,
                           NULL);
-   execute_str (context, "link stdio control", NULL, 0);
+   execute_str (&context, "link stdio control", NULL, 0);
 
-   stdin_linked_channel = linked_channels (context, stdin_id);
+   stdin_linked_channel = linked_channels (&context, stdin_id);
 
    /////////////////////////////////////////////////////
    // channel help readout
@@ -241,9 +246,9 @@ int main (int argc, char *argv[])
 
       if (stdin_linked_channel != 0)
       {
-         write_str (context, stdin_linked_channel, "help ", stdin_id);
-         write_str (context, stdin_linked_channel, argv[2], stdin_id);
-         write_str (context, stdin_linked_channel, "\n", stdin_id);
+         write_str (&context, stdin_linked_channel, "help ", stdin_id);
+         write_str (&context, stdin_linked_channel, argv[2], stdin_id);
+         write_str (&context, stdin_linked_channel, "\n", stdin_id);
       }
       return 1;
    }
@@ -267,7 +272,7 @@ int main (int argc, char *argv[])
          if(*s=='\\') *s='/' ; // Replace windows \ into /
          s++ ;
        }
-       execute_str (context, buffer, NULL, 0);
+       execute_str (&context, buffer, NULL, 0);
        
        fclose (fconf);
    }
@@ -285,7 +290,7 @@ int main (int argc, char *argv[])
    {
       char buffer[256];
       buffer[0] = 0;
-      read_str (context, channel_enum (context, "rtc_str"), buffer, 256);
+      read_str (&context, channel_enum (&context, "rtc_str"), buffer, 256);
       fprintf (conflog,
                "\n\n# RESTART at %s #############################\n", buffer);
 
@@ -319,6 +324,6 @@ int main (int argc, char *argv[])
       s[0] = getchar ();
       s[1] = 0;
       if (stdin_linked_channel != 0)
-         write_str (context, context->control, s, stdin_id);
+         write_str (&context, context.control, s, stdin_id);
    }
 }
