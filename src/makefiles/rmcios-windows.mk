@@ -1,12 +1,14 @@
 SRC_DIR:=RMCIOS-system
 INTERFACE_DIR:=RMCIOS-interface
+STD_CONTEXT_DIR:=RMCIOS-std-context
 include version_str.mk
 GCC?=gcc
 
 SOURCES=RMCIOS-windows.c 
-SOURCES+= string-conversion.c 
+SOURCES+= $(SRC_DIR)/convert.c 
 SOURCES+= $(SRC_DIR)/RMCIOS-system.c 
-SOURCES+=$(INTERFACE_DIR)/RMCIOS-functions.c
+SOURCES+= $(INTERFACE_DIR)/RMCIOS-functions.c
+SOURCES+= $(STD_CONTEXT_DIR)/*.c
 
 OUTPUT_DIR:=$(OUTPUT_PATH)
 OUTPUT_FILE?=RMCIOS.exe
@@ -21,6 +23,7 @@ CFLAGS+=-static-libgcc
 CFLAGS+=-ggdb3 
 CFLAGS+=-I $(SRC_DIR)
 CFLAGS+=-I $(INTERFACE_DIR) 
+CFLAGS+=-I $(STD_CONTEXT_DIR) 
 CFLAGS+=-D API_ENTRY_FUNC=""
 CFLAGS+=-Wall
 CFLAGS+=-Wextra
