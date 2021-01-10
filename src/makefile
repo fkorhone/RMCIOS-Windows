@@ -1,6 +1,6 @@
 MAKE?=make
 GCC?=gcc
-MKDIR=makefiles
+MKDIR=.
 GCC_CROSS_WIN32?=i686-w64-mingw32-gcc
 GCC_CROSS_WIN64?=x86_64-w64-mingw32-gcc
 DLLTOOL_CROSS_WIN32?=i686-w64-mingw32-dlltool

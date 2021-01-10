@@ -5,7 +5,7 @@
 
 call toolpath
 2
-set INDENTER_FLAGS=-npsl --indent-level3 --no-tabs --line-length80 --brace-indent0 --comment-indentation9
+set INDENTER_FLAGS=-npsl --indent-level4 --no-tabs --brace-indent0 --comment-indentation9
 
 IF (%1)==() GOTO error
 dir /b /ad %1 >nul 2>nul && GOTO indentDir
