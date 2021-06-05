@@ -20,11 +20,11 @@ rmcios: gentime
 	$(MAKE) -f rmcios-windows.mk
 
 nidaqmx-module: gentime 
-	$(MAKE) -C RMCIOS-NI-DAQmx-module
+	$(MAKE) -C RMCIOS-NI-DAQmx-module LINKDEF=${NIDAQDEF}
 	$(MAKE) -C RMCIOS-NI-DAQmx-module install
 
 labjack-module: gentime
-	$(MAKE) -C RMCIOS-Labjack-module
+	$(MAKE) -C RMCIOS-Labjack-module LINKDEF=${LJMDEF}
 	$(MAKE) -C RMCIOS-Labjack-module install
 
 python-module: gentime
