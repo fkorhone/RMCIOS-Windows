@@ -83,7 +83,19 @@ void stdio_class_func (void *this,
       break;
    }
 }
+// Channel for setting stdinput destination. And writing to stdout
+void const_string_func (const char *str,
+                        const struct context_rmcios *context, int id,
+                        enum function_rmcios function,
+                        enum type_rmcios paramtype,
+                        struct combo_rmcios *returnv,
+                        int num_params, const union param_rmcios param)
 
+{
+    if(function = read_rmcios) {
+        return_string(context, returnv, str);
+    }
+}
 
 // Linked list of buffered data
 struct buffer_queue
@@ -160,6 +172,7 @@ int main (int argc, char *argv[])
    DIR *d;
    struct dirent *dir;
    char mname[1024];
+   char installpath[1024];
    int mlen;
 
    // Dont show dialog boxes when dlls fail to load:
@@ -183,7 +196,10 @@ int main (int argc, char *argv[])
          break;
       }
    }
+   strcpy (installpath, mname);
    strcat (mname, "modules");
+    
+   create_channel_str (&context, "installpath", (class_rmcios) const_string_func, installpath);
 
    d = opendir (mname);
    int slen;
