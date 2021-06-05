@@ -22,3 +22,6 @@
 [submodule "src/RMCIOS-Python"]
 	path = src/RMCIOS-Python
 	url = https://github.com/fkorhone/RMCIOS-Python.git
+[submodule "src/RMCIOS-std-context"]
+	path = src/RMCIOS-std-context
+	url = https://github.com/fkorhone/RMCIOS-std-context.git
